@@ -19,6 +19,10 @@ def add_technical_indicator(data, indicator):
         data['MACD'] = ta.trend.macd(data['Close'])
         data['MACD_Signal'] = ta.trend.macd_signal(data['Close'])
         data['MACD_Hist'] = ta.trend.macd_diff(data['Close'])
+    elif indicator == 'BB':
+        data['BB_High'] = ta.volatility.bollinger_hband(data['Close'], window=20, window_dev=2)
+        data['BB_Low'] = ta.volatility.bollinger_lband(data['Close'], window=20, window_dev=2)
+        data['BB_Middle'] = ta.volatility.bollinger_mavg(data['Close'], window=20)
     return data
 
 def plot_data(data, ticker, indicator):
@@ -37,6 +41,11 @@ def plot_data(data, ticker, indicator):
         plt.plot(data['MACD'], label='MACD')
         plt.plot(data['MACD_Signal'], label='Signal Line')
         plt.bar(data.index, data['MACD_Hist'], label='MACD Histogram', color='grey', alpha=0.5)
+    elif indicator == 'BB':
+        plt.plot(data['BB_High'], label='Bollinger High Band')
+        plt.plot(data['BB_Low'], label='Bollinger Low Band')
+        plt.plot(data['BB_Middle'], label='Bollinger Middle Band')
+        plt.fill_between(data.index, data['BB_High'], data['BB_Low'], color='gray', alpha=0.1)
     
     plt.title(f'{ticker} - {indicator}')
     plt.legend()
@@ -46,7 +55,7 @@ def main():
     ticker = input("Enter the asset ticker (e.g., AAPL, MSFT, BTC-USD): ")
     start_date = input("Enter the start date (YYYY-MM-DD): ")
     end_date = input("Enter the end date (YYYY-MM-DD): ")
-    indicator = input("Enter the indicator (SMA, EMA, RSI, MACD): ")
+    indicator = input("Enter the indicator (SMA, EMA, RSI, MACD, BB): ")
 
     # Fetch data
     data = fetch_data(ticker, start_date, end_date)
