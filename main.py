@@ -5,8 +5,14 @@ import ta
 import matplotlib.pyplot as plt
 
 def fetch_data(ticker, start_date, end_date):
-    data = yf.download(ticker, start=start_date, end=end_date)
-    return data
+    try:
+        data = yf.download(ticker, start=start_date, end=end_date)
+        if data.empty:
+            raise ValueError(f"No data found for {ticker} in the given date range.")
+        return data
+    except Exception as e:
+        print(f"Failed to download data for {ticker}: {e}")
+        return None
 
 def add_technical_indicator(data, indicator):
     if indicator == 'SMA':
@@ -23,9 +29,14 @@ def add_technical_indicator(data, indicator):
         data['BB_High'] = ta.volatility.bollinger_hband(data['Close'], window=20, window_dev=2)
         data['BB_Low'] = ta.volatility.bollinger_lband(data['Close'], window=20, window_dev=2)
         data['BB_Middle'] = ta.volatility.bollinger_mavg(data['Close'], window=20)
+    data = data.dropna()
     return data
 
 def plot_data(data, ticker, indicator):
+    if data is None or data.empty:
+        print("No data to plot.")
+        return
+        
     plt.figure(figsize=(14, 7))
     plt.plot(data['Close'], label='Close Price')
     
@@ -59,6 +70,8 @@ def main():
 
     # Fetch data
     data = fetch_data(ticker, start_date, end_date)
+    if data is None:
+        return
     
     # Add technical indicator
     data = add_technical_indicator(data, indicator)
