@@ -52,7 +52,20 @@ def calculate_ichimoku(data):
 
     return data
 
-def plot_data(data, ticker, indicator):
+def calculate_fibonacci_levels(data):
+    high_price = data['Close'].max()
+    low_price = data['Close'].min()
+    diff = high_price - low_price
+
+    level1 = high_price - 0.236 * diff
+    level2 = high_price - 0.382 * diff
+    level3 = high_price - 0.5 * diff
+    level4 = high_price - 0.618 * diff
+    level5 = high_price - 0.786 * diff
+
+    return [high_price, level1, level2, level3, level4, level5, low_price]
+
+def plot_data(data, ticker, indicator, show_fibonacci=False):
     if data is None or data.empty:
         print("No data to plot.")
         return
@@ -86,6 +99,12 @@ def plot_data(data, ticker, indicator):
 
         plt.fill_between(future_index, data['Senkou Span A'], data['Senkou Span B'], where=data['Senkou Span A'] >= data['Senkou Span B'], color='green', alpha=0.25)
         plt.fill_between(future_index, data['Senkou Span A'], data['Senkou Span B'], where=data['Senkou Span A'] < data['Senkou Span B'], color='red', alpha=0.25)
+
+    if show_fibonacci:
+        fib_levels = calculate_fibonacci_levels(data)
+        colors = ['#FF5733', '#FFBD33', '#75FF33', '#33FF57', '#33FFBD', '#3380FF']
+        for i, level in enumerate(fib_levels[:-1]):
+            plt.fill_between(data.index, fib_levels[i], fib_levels[i+1], color=colors[i], alpha=0.3)
     
     plt.title(f'{ticker} - {indicator}', fontsize=14)
     plt.legend(fontsize=10)
@@ -96,6 +115,7 @@ def main():
     start_date = input("Enter the start date (YYYY-MM-DD): ")
     end_date = input("Enter the end date (YYYY-MM-DD): ")
     indicator = input("Enter the indicator (SMA, EMA, RSI, MACD, BB, IC): ")
+    show_fibonacci = input("Show Fibonacci retracement levels? (yes/no): ").lower() == 'yes'
 
     # Fetch data
     data = fetch_data(ticker, start_date, end_date)
@@ -106,7 +126,7 @@ def main():
     data = add_technical_indicator(data, indicator)
     
     # Plot data
-    plot_data(data, ticker, indicator)
+    plot_data(data, ticker, indicator, show_fibonacci)
 
 if __name__ == "__main__":
     main()
