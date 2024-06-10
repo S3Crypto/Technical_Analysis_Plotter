@@ -3,16 +3,7 @@ import ta
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-
-def fetch_data(ticker, start_date, end_date):
-    try:
-        data = yf.download(ticker, start=start_date, end=end_date)
-        if data.empty:
-            raise ValueError(f"No data found for {ticker} in the given date range.")
-        return data
-    except Exception as e:
-        print(f"Failed to download data for {ticker}: {e}")
-        return None
+from data_fetcher import fetch_data
 
 def add_technical_indicators(data, indicators):
     for indicator in indicators:
