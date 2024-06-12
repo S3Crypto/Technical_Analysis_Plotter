@@ -61,14 +61,13 @@ def plot_ichimoku(data: pd.DataFrame) -> None:
     """
     Plots the Ichimoku Cloud indicators.
     """
-    past_index = data.index + pd.DateOffset(days=-26)
     if 'Senkou Span A' in data and 'Senkou Span B' in data:
-        plt.plot(past_index, data['Senkou Span A'], label='Senkou Span A', color='green', linewidth=1.5)
-        plt.plot(past_index, data['Senkou Span B'], label='Senkou Span B', color='brown', linewidth=1.5)
-        plt.fill_between(past_index, data['Senkou Span A'], data['Senkou Span B'], 
-                         where=data['Senkou Span A'] >= data['Senkou Span B'], color='green', alpha=0.25)
-        plt.fill_between(past_index, data['Senkou Span A'], data['Senkou Span B'], 
-                         where=data['Senkou Span A'] < data['Senkou Span B'], color='red', alpha=0.25)
+        span_a = data['Senkou Span A'].shift(26)
+        span_b = data['Senkou Span B'].shift(26)
+        plt.plot(data.index, span_a, label='Senkou Span A', color='green', linewidth=1.5)
+        plt.plot(data.index, span_b, label='Senkou Span B', color='brown', linewidth=1.5)
+        plt.fill_between(data.index, span_a, span_b, where=(span_a >= span_b), color='green', alpha=0.25)
+        plt.fill_between(data.index, span_a, span_b, where=(span_a < span_b), color='red', alpha=0.25)
 
 PLOT_FUNCTIONS = {
     'SMA': plot_sma,
