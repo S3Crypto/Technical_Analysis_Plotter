@@ -1,14 +1,25 @@
-import yfinance as yf
 import logging
+import yfinance as yf
+import pandas as pd
 
-logging.basicConfig(level=logging.INFO)
+def fetch_data(ticker: str, start_date: str, end_date: str) -> pd.DataFrame:
+    """
+    Fetches historical data for a given ticker symbol.
 
-def fetch_data(ticker, start_date, end_date):
+    Parameters:
+    ticker (str): The ticker symbol for the asset.
+    start_date (str): The start date in YYYY-MM-DD format.
+    end_date (str): The end date in YYYY-MM-DD format.
+
+    Returns:
+    pd.DataFrame: DataFrame containing historical data or an empty DataFrame.
+    """
     try:
         data = yf.download(ticker, start=start_date, end=end_date)
         if data.empty:
-            raise ValueError(f"No data found for {ticker} in the given date range.")
+            logging.warning(f"No data found for {ticker} in the given date range.")
+            return pd.DataFrame()
         return data
     except Exception as e:
         logging.error(f"Failed to download data for {ticker}: {e}")
-        return None
+        return pd.DataFrame()

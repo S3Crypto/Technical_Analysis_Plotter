@@ -1,0 +1,14 @@
+import pytest
+import pandas as pd
+from fibonacci import calculate_fibonacci_levels
+
+# Sample DataFrame for testing
+data = pd.DataFrame({
+    'Close': [100, 101, 102, 103, 104, 105, 106, 107, 108, 109]
+})
+
+def test_calculate_fibonacci_levels():
+    levels = calculate_fibonacci_levels(data)
+    assert len(levels) == 7  # Should return 7 levels
+    assert levels[0] == data['Close'].max()  # High price
+    assert levels[-1] == data['Close'].min()  # Low price
