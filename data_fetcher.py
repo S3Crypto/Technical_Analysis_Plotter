@@ -1,4 +1,7 @@
 import yfinance as yf
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 def fetch_data(ticker, start_date, end_date):
     try:
@@ -7,6 +10,5 @@ def fetch_data(ticker, start_date, end_date):
             raise ValueError(f"No data found for {ticker} in the given date range.")
         return data
     except Exception as e:
-        print(f"Failed to download data for {ticker}: {e}")
+        logging.error(f"Failed to download data for {ticker}: {e}")
         return None
-        

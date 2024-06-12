@@ -2,6 +2,10 @@ from data_fetcher import fetch_data
 from indicators import add_sma, add_ema, add_rsi, add_macd, add_bollinger_bands
 from ichimoku import calculate_ichimoku
 from plotter import plot_data
+import json
+
+with open('config.json') as config_file:
+    config = json.load(config_file)
 
 INDICATOR_FUNCTIONS = {
     'SMA': add_sma,
@@ -14,8 +18,8 @@ INDICATOR_FUNCTIONS = {
 
 def main():
     ticker = input("Enter the asset ticker (e.g., AAPL, MSFT, BTC-USD): ")
-    start_date = input("Enter the start date (YYYY-MM-DD): ")
-    end_date = input("Enter the end date (YYYY-MM-DD): ")
+    start_date = input(f"Enter the start date ({config['date_format']}): ")
+    end_date = input(f"Enter the end date ({config['date_format']}): ")
     indicators = input("Enter the indicators (SMA, EMA, RSI, MACD, BB, IC) separated by commas: ").split(',')
     show_fibonacci = input("Show Fibonacci retracement levels? (yes/no): ").lower() == 'yes'
 
